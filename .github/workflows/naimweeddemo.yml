@@ -1,0 +1,22 @@
+name: awsweed-depl
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ACC_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.SECRET_ACC_ID }}
+          aws-region: ${{ secrets.AWS_RGN }}
+      - name: Build React App
+        run: npm install && npm run build
+      - name: Deploy app build to S3 bucket
+        run: aws s3 sync ./build/ s3://weed-aws-demo-bucket
